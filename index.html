@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecom</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch Example</title>
+  <style>
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
-    
+    <div class="container">
+        <div class="nav">
+            <div class="title">Ecommerce Store</div>
+            <div class="list-items">
+                <ul> 
+                    <li><button><i class="fas fa-shopping-cart"><sup id="cart"></sup>
+                        </button></i>
+                    </li>
+                    <li><input type="submit" value="Home" id="homepage" onclick="showHome()"></li>
+                    <li><input type="submit" value="Login" id="loginpage" onclick="showLogin()"></li>
+                    <li><input type="submit" value="Sign up" id="singuppage " onclick="showRegister()"></li>
+                </ul>
+            </div>
+        </div>  
+
+        <div id="products"></div><!--Product dekhauney div-->
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
