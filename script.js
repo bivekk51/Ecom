@@ -120,6 +120,8 @@ function showLogin() {
     document.querySelector('.registerpage').style.display = 'none';
     document.getElementById('products').style.display = 'none';
     document.getElementById('product-details').style.display = 'none'
+    document.getElementById("cartdiv").style.display = 'none';
+
 }
 
 function showRegister() {
@@ -127,6 +129,7 @@ function showRegister() {
     document.querySelector('.registerpage').style.display = 'block';
     document.getElementById('products').style.display = 'none';
     document.getElementById('product-details').style.display = 'none'
+    document.getElementById("cartdiv").style.display = 'none';
 }
 
 function showHome() {
@@ -134,6 +137,7 @@ function showHome() {
     document.querySelector('.registerpage').style.display = 'none';
     document.getElementById('products').style.display = 'block';
     document.getElementById('product-details').style.display = 'none'
+    document.getElementById("cartdiv").style.display = 'none';
 }
 
 
