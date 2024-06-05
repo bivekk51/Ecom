@@ -20,23 +20,21 @@ fetch('https://fakestoreapi.com/products')
     })
     .catch(error => console.error('Error:', error));
 
-
 function renderProducts(products) {
     const productsContainer = document.getElementById('products');
     productsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4';
-    productsContainer.innerHTML = '';
+    productsContainer.innerHTML = ''; // Clear existing products
 
     products.forEach(product => {
         const productDiv = document.createElement('div');
-        productDiv.className = 'bg-white rounded overflow-hidden shadow-lg p-4 flex flex-col justify-between leading-normal cursor-pointer hover:bg-gray-100';
+        productDiv.classList.add('bg-white', 'rounded', 'overflow-hidden', 'shadow-lg', 'p-4', 'flex', 'flex-col', 'justify-between', 'leading-normal');
         productDiv.innerHTML = `
             <div class="mb-8">
                 <div class="mb-4">
-                    <img class="w-full h-64 object-cover object-center" src="${product.image}" alt="${product.title}">
+                    <img class="w-full h-64 object-cover object-center cursor-pointer transform transition-transform duration-200 hover:translate-y-1" src="${product.image}" alt="${product.title}" onclick="displayDetail(${product.id})">
                 </div>
                 <div class="mb-2">
                     <h2 class="text-xl font-bold text-gray-900">${product.title}</h2>
-                    <p class="text-gray-700 text-base">${product.description}</p>
                 </div>
             </div>
             <div class="flex items-center justify-between">
@@ -48,6 +46,7 @@ function renderProducts(products) {
         productsContainer.appendChild(productDiv);
     });
 }
+
 
 async function userRegister() {
     const name = document.getElementById('name').value
@@ -120,18 +119,21 @@ function showLogin() {
     document.querySelector('.loginpage').style.display = 'block';
     document.querySelector('.registerpage').style.display = 'none';
     document.getElementById('products').style.display = 'none';
+    document.getElementById('product-details').style.display = 'none'
 }
 
 function showRegister() {
     document.querySelector('.loginpage').style.display = 'none';
     document.querySelector('.registerpage').style.display = 'block';
     document.getElementById('products').style.display = 'none';
+    document.getElementById('product-details').style.display = 'none'
 }
 
 function showHome() {
     document.querySelector('.loginpage').style.display = 'none';
     document.querySelector('.registerpage').style.display = 'none';
     document.getElementById('products').style.display = 'block';
+    document.getElementById('product-details').style.display = 'none'
 }
 
 
@@ -150,6 +152,7 @@ function showCart() {
     document.querySelector('.loginpage').style.display = 'none';
     document.querySelector('.registerpage').style.display = 'none';
     document.getElementById('products').style.display = 'none';
+    document.getElementById('product-details').style.display = 'none'
     updateCartDisplay();
 }
 
@@ -220,4 +223,42 @@ function updateCartDisplay() {
     });
 }
 
+
+function displayDetail(id) {
+    fetch(`https://fakestoreapi.com/products/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            getDetails(data)
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function getDetails(product) {
+    const productDetail = document.getElementById('product-details');
+    productDetail.style.display = 'block';
+    document.getElementById("cartdiv").style.display = 'none';
+    document.querySelector('.loginpage').style.display = 'none';
+    document.querySelector('.registerpage').style.display = 'none';
+    document.getElementById('products').style.display = 'none';
+
+    productDetail.className = 'bg-white rounded overflow-hidden shadow-lg p-8 mx-auto flex flex-col md:flex-row items-center space-x-4';
+    productDetail.style.maxWidth = '50%';
+
+    productDetail.innerHTML = `
+        <div class="w-full md:w-1/3 mb-4 md:mb-0">
+            <img class="w-full h-full object-cover object-center " src="${product.image}" alt="${product.title}">
+        </div>
+        <div class="flex flex-col flex-grow space-y-4">
+            <h2 class="text-xl font-bold text-gray-900">${product.title}</h2>
+            <p class="text-gray-700 text-sm">${product.description}</p>
+            <div class="text-lg font-bold text-blue-500">Price: $${product.price}</div>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="addCart(${product.id})">Add to Cart</button>
+        </div>
+    `;
+}
 
