@@ -28,8 +28,7 @@ function renderProducts(products) {
 
     products.forEach(product => {
         const productDiv = document.createElement('div');
-        productDiv.className = 'bg-white rounded overflow-hidden shadow-lg p-4 flex flex-col justify-between leading-normal';
-
+        productDiv.className = 'bg-white rounded overflow-hidden shadow-lg p-4 flex flex-col justify-between leading-normal cursor-pointer hover:bg-gray-100';
         productDiv.innerHTML = `
             <div class="mb-8">
                 <div class="mb-4">
@@ -42,7 +41,7 @@ function renderProducts(products) {
             </div>
             <div class="flex items-center justify-between">
                 <p class="text-gray-900 font-bold">Price: $${product.price}</p>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="increaseCart()">Add to cart</button>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="addCart(${product.id})">Add to cart</button>
             </div>
         `;
 
@@ -135,14 +134,7 @@ function showHome() {
     document.getElementById('products').style.display = 'block';
 }
 
-function increaseCart() {
-    noOfItemsInCart++
-    showcarts(noOfItemsInCart)
-}
-function showcarts(noOfItemsInCart) {
-    const cart = document.getElementById('cart')
-    cart.innerHTML = noOfItemsInCart
-}
+
 async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
@@ -151,3 +143,81 @@ async function hashPassword(password) {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
+let cartItems = [];
+
+function showCart() {
+    document.getElementById("cartdiv").style.display = 'block';
+    document.querySelector('.loginpage').style.display = 'none';
+    document.querySelector('.registerpage').style.display = 'none';
+    document.getElementById('products').style.display = 'none';
+    updateCartDisplay();
+}
+
+function addCart(id) {
+    fetchToCart(id);
+    noOfItemsInCart++;
+    showcarts(noOfItemsInCart);
+}
+
+function showcarts(noOfItemsInCart) {
+    const cart = document.getElementById('cart');
+    cart.innerHTML = noOfItemsInCart;
+}
+
+function fetchToCart(id) {
+    fetch(`https://fakestoreapi.com/products/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            addToCart(data);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function addToCart(product) {
+    cartItems.push(product);
+    updateCartDisplay();
+}
+
+function deleteFromCart(productId) {
+    cartItems = cartItems.filter(product => product.id !== productId);
+    noOfItemsInCart--;
+    showcarts(noOfItemsInCart);
+    updateCartDisplay();
+}
+
+function updateCartDisplay() {
+    const cartContainer = document.getElementById('cartdiv');
+    cartContainer.className = 'p-4';
+    cartContainer.innerHTML = `
+        <h2 class="text-3xl font-bold mb-6 text-center text-blue-500">Items in Cart</h2>
+        <div class="flex flex-col space-y-4">
+        </div>
+    `;
+
+    const listContainer = cartContainer.querySelector('.flex');
+
+    cartItems.forEach(product => {
+        const cartDiv = document.createElement('div');
+        cartDiv.className = 'bg-white rounded overflow-hidden shadow-lg p-4 flex items-center space-x-4 hover:bg-gray-100';
+        cartDiv.innerHTML = `
+            <div class="w-24 h-24">
+                <img class="w-full h-full object-cover object-center" src="${product.image}" alt="${product.title}">
+            </div>
+            <div class="flex flex-col flex-grow">
+                <h2 class="text-xl font-bold text-gray-900">${product.title}</h2>
+                <p class="text-gray-700 text-base">${product.description}</p>
+                <p class="text-gray-900 font-bold">Price: $${product.price}</p>
+            </div>
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="deleteFromCart(${product.id})">Delete</button>
+        `;
+
+        listContainer.appendChild(cartDiv);
+    });
+}
+
+
